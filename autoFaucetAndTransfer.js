@@ -46,8 +46,8 @@ async function autoFaucet(walletAddresses) {
             );
             await submitButton.click();
 
-            // Chờ 5 giây để tránh spam
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            // Chờ 1 phút 10 giây để tránh spam
+            await new Promise(resolve => setTimeout(resolve, 70000));
         }
         console.log("Faucet requests completed!");
     } catch (err) {
