@@ -1,6 +1,6 @@
 const bip39 = require("bip39");
 const { ethers } = require("ethers");
-const { Builder, By, until } = require("selenium-webdriver");
+const { Builder, By, until, ServiceBuilder } = require("selenium-webdriver"); 
 const { Options } = require("selenium-webdriver/chrome");
 require("chromedriver");
 
@@ -8,14 +8,13 @@ require("chromedriver");
 const mnemonic = bip39.generateMnemonic();
 console.log("Generated mnemonic:", mnemonic);
 
-// Chuỗi mnemonic và các cấu hình
-// const mnemonic = "leisure climb year beauty call stem thunder minimum gown course right wine"; // Replace with a valid mnemonic
-const numberOfWallets = 100; // Số lượng ví cần tạo
-const faucetURL = "https://faucet.sandverse.oasys.games/"; // URL trang faucet
-const fixedAddress = "0xF19A87252c1d9BEF7867E137fCA8eE24Aa3f47AE"; // Địa chỉ cố định nhận OAS
-const providerURL = "https://rpc.sandverse.oasys.games"; // RPC URL của mạng blockchain
+// Các cấu hình khác
+const numberOfWallets = 100;
+const faucetURL = "https://faucet.sandverse.oasys.games/";
+const fixedAddress = "0xF19A87252c1d9BEF7867E137fCA8eE24Aa3f47AE";
+const providerURL = "https://rpc.sandverse.oasys.games";
 
-// Tạo 100 ví từ mnemonic
+// Tạo ví từ mnemonic
 function generateWallets(mnemonic, number) {
     const walletAddresses = [];
     const wallets = [];
@@ -30,7 +29,7 @@ function generateWallets(mnemonic, number) {
     return { walletAddresses, wallets };
 }
 
-// Tự động gửi request faucet và gửi ngay sau khi nhận
+// Tự động nhận faucet và gửi tiền
 async function autoFaucetAndSendFunds(wallets) {
     const driver = await new Builder()
         .forBrowser("chrome")
@@ -41,8 +40,9 @@ async function autoFaucetAndSendFunds(wallets) {
                 .addArguments('--no-sandbox')
                 .addArguments('--disable-dev-shm-usage')
         )
-        .setChromeService(new ServiceBuilder('/usr/bin/chromedriver').build())
+        .setChromeService(new ServiceBuilder('/usr/bin/chromedriver').build()) // path to chromedriver
         .build();
+
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
     try {
@@ -51,22 +51,15 @@ async function autoFaucetAndSendFunds(wallets) {
         for (const wallet of wallets) {
             console.log(`Requesting faucet for address: ${wallet.address}`);
 
-            // Tìm ô input và nhập địa chỉ ví
             const inputField = await driver.wait(until.elementLocated(By.css('input[placeholder="Address"]')), 5000);
             await inputField.clear();
             await inputField.sendKeys(wallet.address);
 
-            // Tìm và click nút Submit
-            const submitButton = await driver.wait(
-                until.elementLocated(By.xpath("//button[text()='Submit']")),
-                5000
-            );
+            const submitButton = await driver.wait(until.elementLocated(By.xpath("//button[text()='Submit']")), 5000);
             await submitButton.click();
 
-            // Chờ một chút để đảm bảo faucet request được xử lý
             await new Promise(resolve => setTimeout(resolve, 70000));
 
-            // Gửi toàn bộ số dư về địa chỉ cố định
             const connectedWallet = wallet.connect(provider);
             const balance = await connectedWallet.getBalance();
 
@@ -98,7 +91,6 @@ async function autoFaucetAndSendFunds(wallets) {
         await driver.quit();
     }
 }
-
 
 // Chạy toàn bộ quy trình
 async function main() {
