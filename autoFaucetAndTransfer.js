@@ -1,6 +1,7 @@
 const bip39 = require("bip39");
 const { ethers } = require("ethers");
 const { Builder, By, until } = require("selenium-webdriver");
+const { Options } = require("selenium-webdriver/chrome");
 require("chromedriver");
 
 // Tạo mnemonic 12 từ
@@ -31,7 +32,16 @@ function generateWallets(mnemonic, number) {
 
 // Tự động gửi request faucet và gửi ngay sau khi nhận
 async function autoFaucetAndSendFunds(wallets) {
-    const driver = await new Builder().forBrowser("chrome").build();
+    const driver = await new Builder()
+        .forBrowser("chrome")
+        .setChromeOptions(
+            new Options()
+                .addArguments('--headless=new')
+                .addArguments('--disable-gpu')
+                .addArguments('--no-sandbox')
+                .addArguments('--disable-dev-shm-usage')
+        )
+        .build();
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
     try {
@@ -87,6 +97,7 @@ async function autoFaucetAndSendFunds(wallets) {
         await driver.quit();
     }
 }
+
 
 // Chạy toàn bộ quy trình
 async function main() {
