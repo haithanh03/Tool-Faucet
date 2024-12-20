@@ -4,7 +4,6 @@
     "chromedriver": "^131.0.4",
     "ethers": "^5.7.2",
     "firefox": "^0.0.1",
-    "geckodriver": "^5.0.0",
     "selenium-webdriver": "^4.27.0"
   },
   "name": "autofaucetandbatchtransfer",
@@ -16,5 +15,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "geckodriver": "^5.0.0"
+  }
 }

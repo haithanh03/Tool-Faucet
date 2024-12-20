@@ -4,6 +4,8 @@ const { Builder, By, until } = require("selenium-webdriver");
 const chrome = require('selenium-webdriver/chrome');
 const { Options } = require("selenium-webdriver/chrome");
 require("chromedriver");
+const firefox = require("selenium-webdriver/firefox");
+require("geckodriver");
 
 // Tạo mnemonic 12 từ
 const mnemonic = bip39.generateMnemonic();
@@ -33,18 +35,14 @@ function generateWallets(mnemonic, number) {
 // Tự động nhận faucet và gửi tiền
 async function autoFaucetAndSendFunds(wallets) {
     // Configure chrome options
-    const options = new Options()
-        .addArguments('--headless=new')
-        .addArguments('--disable-gpu')
-        .addArguments('--no-sandbox')
-        .addArguments('--disable-dev-shm-usage');
+    const options = new firefox.Options();
+    options.addArguments("-headless");
 
     // Create driver with configured options
     const driver = await new Builder()
-        .forBrowser("chrome")
-        .setChromeOptions(options)
+        .forBrowser("firefox")
+        .setFirefoxOptions(options)
         .build();
-
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
     try {
