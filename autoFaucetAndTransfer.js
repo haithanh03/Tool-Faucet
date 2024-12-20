@@ -1,20 +1,24 @@
+const bip39 = require("bip39");
 const { ethers } = require("ethers");
 const { Builder, By, until } = require("selenium-webdriver");
 require("chromedriver");
 
+// Tạo mnemonic 12 từ
+const mnemonic = bip39.generateMnemonic();
+console.log("Generated mnemonic:", mnemonic);
+
 // Chuỗi mnemonic và các cấu hình
-const mnemonic = "combine hour slide help smile diagram day surge inform crash produce simple"; // Replace with a valid mnemonic
+// const mnemonic = "leisure climb year beauty call stem thunder minimum gown course right wine"; // Replace with a valid mnemonic
 const numberOfWallets = 100; // Số lượng ví cần tạo
-const faucetURL = "https://faucet.testnet.oasys.games/"; // URL trang faucet
-const fixedAddress = "0x038008d93E3d153eF7a6Df2e555c2367cd79f83a"; // Địa chỉ cố định nhận OAS
-const providerURL = "https://rpc.testnet.oasys.games"; // RPC URL của mạng blockchain
+const faucetURL = "https://faucet.sandverse.oasys.games/"; // URL trang faucet
+const fixedAddress = "0xF19A87252c1d9BEF7867E137fCA8eE24Aa3f47AE"; // Địa chỉ cố định nhận OAS
+const providerURL = "https://rpc.sandverse.oasys.games"; // RPC URL của mạng blockchain
 
 // Tạo 100 ví từ mnemonic
 function generateWallets(mnemonic, number) {
     const walletAddresses = [];
     const wallets = [];
     const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic);
-
     for (let i = 0; i < number; i++) {
         const childNode = hdNode.derivePath(`m/44'/60'/0'/0/${i}`);
         const wallet = new ethers.Wallet(childNode.privateKey);
