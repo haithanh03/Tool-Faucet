@@ -1,10 +1,8 @@
 const bip39 = require("bip39");
 const { ethers } = require("ethers");
 const { Builder, By, until } = require("selenium-webdriver");
-const chrome = require('selenium-webdriver/chrome');
-const { Options } = require("selenium-webdriver/chrome");
-require("chromedriver");
 const firefox = require("selenium-webdriver/firefox");
+const path = require('path');
 require("geckodriver");
 
 // Tạo mnemonic 12 từ
@@ -34,15 +32,18 @@ function generateWallets(mnemonic, number) {
 
 // Tự động nhận faucet và gửi tiền
 async function autoFaucetAndSendFunds(wallets) {
-    // Configure chrome options
-    const options = new firefox.Options();
-    options.addArguments("-headless");
+    // Cấu hình options cho Firefox
+    const options = new firefox.Options()
+        .addArguments("-headless")
+        .addArguments("--width=1920")
+        .addArguments("--height=1080");
 
-    // Create driver with configured options
+    // Tạo driver với Firefox
     const driver = await new Builder()
-        .forBrowser("firefox")
+        .forBrowser('firefox')
         .setFirefoxOptions(options)
         .build();
+
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
     try {
