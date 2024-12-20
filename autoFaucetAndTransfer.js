@@ -3,7 +3,7 @@ const { ethers } = require("ethers");
 const { Builder, By, until } = require("selenium-webdriver");
 const firefox = require("selenium-webdriver/firefox");
 const path = require('path');
-require("geckodriver");
+require("geckodriver"); // Đảm bảo geckodriver được cài đặt
 
 // Tạo mnemonic 12 từ
 const mnemonic = bip39.generateMnemonic();
@@ -11,7 +11,7 @@ console.log("Generated mnemonic:", mnemonic);
 
 // Các cấu hình khác
 const numberOfWallets = 100;
-const faucetURL = "https://faucet.sandverse.oasys.games/";
+const faucetURL = "https://faucet.sandverse.oasys.games/"; 
 const fixedAddress = "0xF19A87252c1d9BEF7867E137fCA8eE24Aa3f47AE";
 const providerURL = "https://rpc.sandverse.oasys.games";
 
@@ -32,16 +32,20 @@ function generateWallets(mnemonic, number) {
 
 // Tự động nhận faucet và gửi tiền
 async function autoFaucetAndSendFunds(wallets) {
-    // Cấu hình options cho Firefox
+    // Cấu hình Firefox options
     const options = new firefox.Options()
         .addArguments("-headless")
         .addArguments("--width=1920")
         .addArguments("--height=1080");
 
+    // Tạo service cho Firefox
+    const service = new firefox.ServiceBuilder();
+
     // Tạo driver với Firefox
     const driver = await new Builder()
-        .forBrowser('firefox')
+        .forBrowser("firefox")
         .setFirefoxOptions(options)
+        .setFirefoxService(service)
         .build();
 
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
@@ -59,7 +63,7 @@ async function autoFaucetAndSendFunds(wallets) {
             const submitButton = await driver.wait(until.elementLocated(By.xpath("//button[text()='Submit']")), 5000);
             await submitButton.click();
 
-            await new Promise(resolve => setTimeout(resolve, 70000));
+            await new Promise(resolve => setTimeout(resolve, 70000)); // Chờ sau khi nhận faucet
 
             const connectedWallet = wallet.connect(provider);
             const balance = await connectedWallet.getBalance();
