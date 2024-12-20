@@ -32,18 +32,17 @@ function generateWallets(mnemonic, number) {
 
 // Tự động nhận faucet và gửi tiền
 async function autoFaucetAndSendFunds(wallets) {
-    const service = new DriverService('/usr/bin/chromedriver'); // Tạo service đúng cách
+    // Configure chrome options
+    const options = new Options()
+        .addArguments('--headless=new')
+        .addArguments('--disable-gpu')
+        .addArguments('--no-sandbox')
+        .addArguments('--disable-dev-shm-usage');
 
+    // Create driver with configured options
     const driver = await new Builder()
         .forBrowser("chrome")
-        .setChromeOptions(
-            new Options()
-                .addArguments('--headless=new')
-                .addArguments('--disable-gpu')
-                .addArguments('--no-sandbox')
-                .addArguments('--disable-dev-shm-usage')
-        )
-        .setChromeService(service) // Sử dụng service ở đây
+        .setChromeOptions(options)
         .build();
 
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
