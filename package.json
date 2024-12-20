@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "bip39": "^3.1.0",
-    "chromedriver": "^131.0.3",
+    "chromedriver": "^131.0.4",
     "ethers": "^5.7.2",
     "firefox": "^0.0.1",
     "geckodriver": "^5.0.0",

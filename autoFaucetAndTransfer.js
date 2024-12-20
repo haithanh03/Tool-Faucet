@@ -41,6 +41,7 @@ async function autoFaucetAndSendFunds(wallets) {
                 .addArguments('--no-sandbox')
                 .addArguments('--disable-dev-shm-usage')
         )
+        .setChromeService(new ServiceBuilder('/usr/bin/chromedriver').build())
         .build();
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
