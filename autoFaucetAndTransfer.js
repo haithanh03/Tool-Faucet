@@ -1,6 +1,7 @@
 const bip39 = require("bip39");
 const { ethers } = require("ethers");
-const { Builder, By, until, ServiceBuilder } = require("selenium-webdriver"); 
+const { Builder, By, until } = require("selenium-webdriver");
+const chrome = require('selenium-webdriver/chrome');
 const { Options } = require("selenium-webdriver/chrome");
 require("chromedriver");
 
@@ -31,6 +32,8 @@ function generateWallets(mnemonic, number) {
 
 // Tự động nhận faucet và gửi tiền
 async function autoFaucetAndSendFunds(wallets) {
+    const service = new DriverService('/usr/bin/chromedriver'); // Tạo service đúng cách
+
     const driver = await new Builder()
         .forBrowser("chrome")
         .setChromeOptions(
@@ -40,7 +43,7 @@ async function autoFaucetAndSendFunds(wallets) {
                 .addArguments('--no-sandbox')
                 .addArguments('--disable-dev-shm-usage')
         )
-        .setChromeService(new ServiceBuilder('/usr/bin/chromedriver').build()) // path to chromedriver
+        .setChromeService(service) // Sử dụng service ở đây
         .build();
 
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
