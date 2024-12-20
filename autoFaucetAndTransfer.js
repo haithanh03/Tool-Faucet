@@ -39,7 +39,8 @@ async function autoFaucetAndSendFunds(wallets) {
         .addArguments("--height=1080");
 
     // Tạo service cho Firefox
-    const service = new firefox.ServiceBuilder();
+    // Khi chạy nhớ cấp quyền cho gecko để chạy root : sudo chmod +x /snap/bin/geckodriver
+    const service = new firefox.ServiceBuilder(/snap/bin/geckodriver);
 
     // Tạo driver với Firefox
     const driver = await new Builder()
